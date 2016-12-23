@@ -59,7 +59,7 @@ class Board extends Component {
       <div key={i}
            onClick={() => this.handleMoveKnight(x, y) }
            style={{ width: '12.5%', height: '12.5%' }}>
-        <Square black={black}>
+        <Square black={black} moveKnightCallback={this.handleMoveKnight} xCoord={x} yCoord={y}>
           {piece}
         </Square>
       </div>
