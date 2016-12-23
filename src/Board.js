@@ -1,8 +1,10 @@
 import React, { Component, PropTypes } from 'react';
+import { DragDropContext } from 'react-dnd';
+import HTML5Backend from 'react-dnd-html5-backend';
 import Square from './Square';
 import Knight from './Knight';
 
-export default class Board extends Component {
+class Board extends Component {
   constructor(props) {
     super(props)
 
@@ -11,6 +13,8 @@ export default class Board extends Component {
     }
 
     this.changeToRandomPos = this.changeToRandomPos.bind(this)
+    this.handleMoveKnight = this.handleMoveKnight.bind(this)
+    this.canMoveKnight = this.canMoveKnight.bind(this)
   }
 
   changeToRandomPos() {
@@ -19,8 +23,26 @@ export default class Board extends Component {
     this.setState({ knightPosition: randomPos })
   }
 
+  canMoveKnight(toX, toY) {
+    const [x, y] = this.state.knightPosition;
+
+    const deltaX = toX - x;
+    const deltaY = toY - y;
+
+    return (Math.abs(deltaX) === 2 && Math.abs(deltaY) === 1) ||
+           (Math.abs(deltaX) === 1 && Math.abs(deltaY) === 2);
+  }
+
+  handleMoveKnight(x ,y) {
+    if (this.canMoveKnight(x, y)) {
+      this.setState({ knightPosition: [x, y] })
+    } else {
+      alert('Invalid move: knight cannot go there.')
+    }
+  }
+
   componentDidMount() {
-    setInterval(() => { this.changeToRandomPos() }, 200);
+    //setInterval(() => { this.changeToRandomPos() }, 200);
   }
 
   renderSquare(i) {
@@ -35,6 +57,7 @@ export default class Board extends Component {
 
     return (
       <div key={i}
+           onClick={() => this.handleMoveKnight(x, y) }
            style={{ width: '12.5%', height: '12.5%' }}>
         <Square black={black}>
           {piece}
@@ -67,3 +90,5 @@ Board.propTypes = {
     PropTypes.number.isRequired
   ).isRequired
 };
+
+export default DragDropContext(HTML5Backend)(Board);
